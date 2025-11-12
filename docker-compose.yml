@@ -1,0 +1,63 @@
+services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: creamdream_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: creamdream_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - creamdream_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin Service for Database Management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: creamdream_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    networks:
+      - creamdream_network
+    depends_on:
+      - postgres
+
+  # .NET Application Service
+  creamdream_app:
+    build:
+      context: CreamDream
+      dockerfile: Dockerfile
+    container_name: creamdream_app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=creamdream_db;Username=admin;Password=admin123;
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    networks:
+      - creamdream_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  creamdream_network:
+    driver: bridge
