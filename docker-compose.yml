@@ -1,0 +1,20 @@
+services:
+  creamdream-api:
+    build:
+      context: .
+      dockerfile: CreamDream/Dockerfile
+    container_name: creamdream-api
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/CreamDream.db
+    volumes:
+      - creamdream-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  creamdream-data:
+    driver: local
