@@ -80,9 +80,9 @@ public class AuthController : ControllerBase
                 AccessToken = token.AccessToken,
                 RefreshToken = token.RefreshToken,
                 UserId = token.UserId,
-                Username = request.UsernameOrEmail, 
-                Email = request.UsernameOrEmail,  
-                Role = "Customer",      
+                Username = token.Username, 
+                Email = token.Email,  
+                Role = token.Role,      
                 ExpiresIn = expirationMinutes * 60
             });
         }

@@ -64,7 +64,7 @@ public class AuthService : IAuthService
         return (accessToken, refreshToken, user.Id);
     }
 
-    public async Task<(string AccessToken, string RefreshToken, int UserId)?> LoginAsync(string usernameOrEmail, string password)
+    public async Task<(string AccessToken, string RefreshToken, int UserId, string Username, string Email, string Role)?> LoginAsync(string usernameOrEmail, string password)
     {
         var user = await _context.Users
             .Where(u => u.DeletedAt == null && (u.Username == usernameOrEmail || u.Email == usernameOrEmail))
@@ -91,7 +91,7 @@ public class AuthService : IAuthService
         _context.RefreshTokens.Add(refreshTokenEntity);
         await _context.SaveChangesAsync();
 
-        return (accessToken, refreshToken, user.Id);
+        return (accessToken, refreshToken, user.Id, user.Username, user.Email, user.Role);
     }
 
     public async Task<bool> LogoutAsync(string refreshToken)

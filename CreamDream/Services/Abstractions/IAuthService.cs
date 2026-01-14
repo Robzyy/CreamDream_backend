@@ -4,7 +4,7 @@ public interface IAuthService
 {
     Task<(string AccessToken, string RefreshToken, int UserId)> RegisterAsync(string username, string email, string password, string role = "Customer");
 
-    Task<(string AccessToken, string RefreshToken, int UserId)?> LoginAsync(string usernameOrEmail, string password);
+    Task<(string AccessToken, string RefreshToken, int UserId, string Username, string Email, string Role)?> LoginAsync(string usernameOrEmail, string password);
 
     Task<bool> LogoutAsync(string refreshToken);
 
